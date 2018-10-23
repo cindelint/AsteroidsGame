@@ -57,8 +57,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
       myCenterY = height;
     }
   }
-  public void show ()  //Draws the floater at the current position
-  {
+  public void show () { //Draws the floater at the current position
     fill(myColor);
     stroke(myColor);
 
@@ -73,11 +72,19 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 
     //draw the polygon
     beginShape();
-    for (int nI = 0; nI < corners; nI++)
-    {
+    for (int nI = 0; nI < corners; nI++) {
       vertex(xCorners[nI], yCorners[nI]);
     }
     endShape(CLOSE);
+
+    if (keyPressed) {
+      fill(255,0,0);
+      beginShape();
+      vertex(-15, 0);
+      vertex(-8, -3);
+      vertex(-8, 3);
+      endShape();
+    }
 
     //"unrotate" and "untranslate" in reverse order
     rotate(-1*dRadians);
