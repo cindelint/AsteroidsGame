@@ -22,7 +22,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   public void accelerate (double dAmount)
   {
     //convert the current direction the floater is pointing to radians
-    double dRadians = myPointDirection*(Math.PI/180);
+    double dRadians =myPointDirection*(Math.PI/180);
     //change coordinates of direction of travel
     myDirectionX += ((dAmount) * Math.cos(dRadians));
     myDirectionY += ((dAmount) * Math.sin(dRadians));
@@ -57,7 +57,8 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
       myCenterY = height;
     }
   }
-  public void show () { //Draws the floater at the current position
+  public void show ()  //Draws the floater at the current position
+  {
     fill(myColor);
     stroke(myColor);
 
@@ -72,22 +73,14 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 
     //draw the polygon
     beginShape();
-    for (int nI = 0; nI < corners; nI++) {
+    for (int nI = 0; nI < corners; nI++)
+    {
       vertex(xCorners[nI], yCorners[nI]);
     }
     endShape(CLOSE);
-
-    if (keyPressed) {
-      fill(255,0,0);
-      beginShape();
-      vertex(-15, 0);
-      vertex(-8, -3);
-      vertex(-8, 3);
-      endShape();
-    }
 
     //"unrotate" and "untranslate" in reverse order
     rotate(-1*dRadians);
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
   }
-}
+} 

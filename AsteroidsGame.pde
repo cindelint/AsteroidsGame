@@ -1,5 +1,6 @@
 Spaceship c;
 Star[] s;
+Asteroid[] a;
 
 public void setup() {
   size(500,500);
@@ -7,6 +8,10 @@ public void setup() {
   s = new Star[200];
   for (int i=0; i<s.length; i++) {
     s[i] = new Star();
+  }
+  a = new Asteroid[12];
+  for (int i=0; i<a.length; i++) {
+    a[i] = new Asteroid();
   }
 }
 
@@ -26,9 +31,13 @@ public void draw() {
       c.turn(5);
     }
   }
+  for (int i=0; i<a.length; i++) {
+    a[i].show();
+    a[i].move();
+  }
 }
 
-void keyPressed() {
+public void keyPressed() {
   if (key == 'h') {
     c.setX((int) (Math.random() * width));
     c.setY((int) (Math.random() * height));

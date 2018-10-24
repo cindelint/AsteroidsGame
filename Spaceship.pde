@@ -50,4 +50,39 @@ class Spaceship extends Floater  {
   public double getPointDirection() {
     return myPointDirection;
   }
+  //overriding Floater to add the rockets
+  public void show () { //Draws the floater at the current position
+    fill(myColor);
+    stroke(myColor);
+
+    //translate the (x,y) center of the ship to the correct position
+    translate((float)myCenterX, (float)myCenterY);
+
+    //convert degrees to radians for rotate()
+    float dRadians = (float)(myPointDirection*(Math.PI/180));
+
+    //rotate so that the polygon will be drawn in the correct direction
+    rotate(dRadians);
+
+    //draw the polygon
+    beginShape();
+    for (int nI = 0; nI < corners; nI++) {
+      vertex(xCorners[nI], yCorners[nI]);
+    }
+    endShape(CLOSE);
+
+    //the rockets
+    if (keyPressed) {
+      fill(255,0,0);
+      beginShape();
+      vertex(-15, 0);
+      vertex(-8, -3);
+      vertex(-8, 3);
+      endShape();
+    }
+
+    //"unrotate" and "untranslate" in reverse order
+    rotate(-1*dRadians);
+    translate(-1*(float)myCenterX, -1*(float)myCenterY);
+  }
 }
