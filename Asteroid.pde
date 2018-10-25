@@ -1,8 +1,10 @@
 class Asteroid extends Floater {
   private int rotSpeed;
   private int mySize;
+  //private float[] cratersX, cratersY, cratersW;
+  //private int numOfCraters;
   Asteroid() {
-    corners = (int) (Math.random() * 5 + 15);
+    corners = (int) (Math.random() * 12) + 10;
     xCorners = new int[corners];
     yCorners = new int[corners];
     mySize = (int) (Math.random() * 10 + 10);
@@ -48,6 +50,11 @@ class Asteroid extends Floater {
   public double getPointDirection() {
     return myPointDirection;
   }
+  public int getSize() {
+    return mySize;
+  }
+
+  //overriding to add spin
   public void move () { //move the floater in the current direction of travel
     //change the x and y coordinates by myDirectionX and myDirectionY
     myCenterX += myDirectionX;

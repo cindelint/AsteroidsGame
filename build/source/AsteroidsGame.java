@@ -14,13 +14,13 @@ import java.io.IOException;
 
 public class AsteroidsGame extends PApplet {
 
-Spaceship c;
+Spaceship ship;
 Star[] s;
 Asteroid[] a;
 
 public void setup() {
   
-  c = new Spaceship();
+  ship = new Spaceship();
   s = new Star[200];
   for (int i=0; i<s.length; i++) {
     s[i] = new Star();
@@ -36,37 +36,42 @@ public void draw() {
   for (int i=0; i<s.length; i++) {
     s[i].show();
   }
-  c.show();
-  c.move();
+  ship.show();
+  ship.move();
   if (keyPressed) {
     if (keyCode == UP) {
-      c.accelerate(0.1f);
+      ship.accelerate(0.1f);
     } else if (keyCode == LEFT) {
-      c.turn(-5);
+      ship.turn(-5);
     } else if (keyCode == RIGHT) {
-      c.turn(5);
+      ship.turn(5);
     }
   }
   for (int i=0; i<a.length; i++) {
     a[i].show();
     a[i].move();
+    if ((abs(ship.getX() - a[i].getX()) <= a[i].getSize()+6) && (abs(ship.getY() - a[i].getY()) <= a[i].getSize()+6)) {
+      ship.getHit();
+    }
   }
 }
 
 public void keyPressed() {
-  if (key == 'h') {
-    c.setX((int) (Math.random() * width));
-    c.setY((int) (Math.random() * height));
-    c.setDirectionX(0);
-    c.setDirectionY(0);
-    c.setPointDirection(0);
+  if (key == 'h') { //hyperspace
+    ship.setX((int) (Math.random() * width));
+    ship.setY((int) (Math.random() * height));
+    ship.setDirectionX(0);
+    ship.setDirectionY(0);
+    ship.setPointDirection(0);
   }
 }
 class Asteroid extends Floater {
   private int rotSpeed;
   private int mySize;
+  //private float[] cratersX, cratersY, cratersW;
+  //private int numOfCraters;
   Asteroid() {
-    corners = (int) (Math.random() * 5 + 15);
+    corners = (int) (Math.random() * 12) + 10;
     xCorners = new int[corners];
     yCorners = new int[corners];
     mySize = (int) (Math.random() * 10 + 10);
@@ -112,6 +117,11 @@ class Asteroid extends Floater {
   public double getPointDirection() {
     return myPointDirection;
   }
+  public int getSize() {
+    return mySize;
+  }
+
+  //overriding to add spin
   public void move () { //move the floater in the current direction of travel
     //change the x and y coordinates by myDirectionX and myDirectionY
     myCenterX += myDirectionX;
@@ -270,6 +280,7 @@ class Spaceship extends Floater  {
   public double getPointDirection() {
     return myPointDirection;
   }
+
   //overriding Floater to add the rockets
   public void show () { //Draws the floater at the current position
     fill(myColor);
@@ -304,6 +315,13 @@ class Spaceship extends Floater  {
     //"unrotate" and "untranslate" in reverse order
     rotate(-1*dRadians);
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
+  }
+
+  public void getHit() {
+    myColor = color(255,0,0);
+    show();
+    myColor = color(200);
+    show();
   }
 }
 class Star //note that this class does NOT extend Floater

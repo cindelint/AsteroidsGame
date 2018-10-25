@@ -50,6 +50,7 @@ class Spaceship extends Floater  {
   public double getPointDirection() {
     return myPointDirection;
   }
+
   //overriding Floater to add the rockets
   public void show () { //Draws the floater at the current position
     fill(myColor);
@@ -84,5 +85,12 @@ class Spaceship extends Floater  {
     //"unrotate" and "untranslate" in reverse order
     rotate(-1*dRadians);
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
+  }
+
+  public void getHit() {
+    myColor = color(255,0,0);
+    show();
+    myColor = color(200);
+    show();
   }
 }
