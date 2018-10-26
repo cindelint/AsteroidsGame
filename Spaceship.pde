@@ -1,4 +1,5 @@
 class Spaceship extends Floater  {
+  private boolean hit;
   public Spaceship() {
     corners = 5;
     xCorners = new int[corners];
@@ -19,6 +20,7 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
+    hit = false;
   }
   public void setX(int x) {
     myCenterX = x;
@@ -87,10 +89,9 @@ class Spaceship extends Floater  {
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
   }
 
-  public void getHit() {
+  public void hit(boolean b) {
+
     myColor = color(255,0,0);
-    show();
-    myColor = color(200);
     show();
   }
 }

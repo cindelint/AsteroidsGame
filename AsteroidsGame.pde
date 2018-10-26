@@ -31,11 +31,12 @@ public void draw() {
       ship.turn(5);
     }
   }
+  ship.setHit(false);
   for (int i=0; i<a.length; i++) {
     a[i].show();
     a[i].move();
     if ((abs(ship.getX() - a[i].getX()) <= a[i].getSize()+6) && (abs(ship.getY() - a[i].getY()) <= a[i].getSize()+6)) {
-      ship.getHit();
+      ship.setHit(true);
     }
   }
 }

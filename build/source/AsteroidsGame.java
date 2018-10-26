@@ -320,8 +320,6 @@ class Spaceship extends Floater  {
   public void getHit() {
     myColor = color(255,0,0);
     show();
-    myColor = color(200);
-    show();
   }
 }
 class Star //note that this class does NOT extend Floater
