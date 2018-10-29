@@ -1,5 +1,6 @@
 class Spaceship extends Floater  {
   private boolean hit;
+  private int health;
   public Spaceship() {
     corners = 5;
     xCorners = new int[corners];
@@ -21,37 +22,19 @@ class Spaceship extends Floater  {
     myDirectionY = 0;
     myPointDirection = 0;
     hit = false;
+    health = 200;
   }
-  public void setX(int x) {
-    myCenterX = x;
-  }
-  public int getX() {
-    return (int) myCenterX;
-  }
-  public void setY(int y) {
-    myCenterY = y;
-  }
-  public int getY() {
-    return (int) myCenterY;
-  }
-  public void setDirectionX(double x) {
-    myDirectionX = x;
-  }
-  public double getDirectionX() {
-    return myDirectionX;
-  }
-  public void setDirectionY(double y) {
-    myDirectionY = y;
-  }
-  public double getDirectionY() {
-    return myDirectionY;
-  }
-  public void setPointDirection(int degrees) {
-    myPointDirection = degrees;
-  }
-  public double getPointDirection() {
-    return myPointDirection;
-  }
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int) myCenterX;}
+  public void setY(int y) {myCenterY = y;}
+  public int getY() {return (int) myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}
+  public double getDirectionY() {return myDirectionY;}
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}
+  public double getPointDirection() {return myPointDirection;}
+  public int getHealth() {return health;}
 
   //overriding Floater to add the rockets
   public void show () { //Draws the floater at the current position
@@ -90,8 +73,11 @@ class Spaceship extends Floater  {
   }
 
   public void hit(boolean b) {
-
-    myColor = color(255,0,0);
-    show();
+    if (b) {
+      myColor = color(255,0,0,200);
+      health--;
+    } else {
+      myColor = color(200);
+    }
   }
 }

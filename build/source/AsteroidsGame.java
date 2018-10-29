@@ -47,12 +47,27 @@ public void draw() {
       ship.turn(5);
     }
   }
+  ship.hit(false);
   for (int i=0; i<a.length; i++) {
     a[i].show();
     a[i].move();
     if ((abs(ship.getX() - a[i].getX()) <= a[i].getSize()+6) && (abs(ship.getY() - a[i].getY()) <= a[i].getSize()+6)) {
-      ship.getHit();
+      ship.hit(true);
     }
+  }
+  if (ship.getHealth() > 0) {
+    fill(230,0,12);
+    noStroke();
+    rect(10,10,ship.getHealth(),20);
+    noFill();
+    stroke(200);
+    rect(10,10,200,20);
+  } else {
+    noLoop();
+    background(100);
+    textSize(20);
+    fill(0);
+    text("you have died", width/2, height/2);
   }
 }
 
@@ -229,6 +244,8 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   }
 } 
 class Spaceship extends Floater  {
+  private boolean hit;
+  private int health;
   public Spaceship() {
     corners = 5;
     xCorners = new int[corners];
@@ -249,37 +266,20 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
+    hit = false;
+    health = 200;
   }
-  public void setX(int x) {
-    myCenterX = x;
-  }
-  public int getX() {
-    return (int) myCenterX;
-  }
-  public void setY(int y) {
-    myCenterY = y;
-  }
-  public int getY() {
-    return (int) myCenterY;
-  }
-  public void setDirectionX(double x) {
-    myDirectionX = x;
-  }
-  public double getDirectionX() {
-    return myDirectionX;
-  }
-  public void setDirectionY(double y) {
-    myDirectionY = y;
-  }
-  public double getDirectionY() {
-    return myDirectionY;
-  }
-  public void setPointDirection(int degrees) {
-    myPointDirection = degrees;
-  }
-  public double getPointDirection() {
-    return myPointDirection;
-  }
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int) myCenterX;}
+  public void setY(int y) {myCenterY = y;}
+  public int getY() {return (int) myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}
+  public double getDirectionY() {return myDirectionY;}
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}
+  public double getPointDirection() {return myPointDirection;}
+  public int getHealth() {return health;}
 
   //overriding Floater to add the rockets
   public void show () { //Draws the floater at the current position
@@ -317,9 +317,13 @@ class Spaceship extends Floater  {
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
   }
 
-  public void getHit() {
-    myColor = color(255,0,0);
-    show();
+  public void hit(boolean b) {
+    if (b) {
+      myColor = color(255,0,0,200);
+      health--;
+    } else {
+      myColor = color(200);
+    }
   }
 }
 class Star //note that this class does NOT extend Floater

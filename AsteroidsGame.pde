@@ -31,13 +31,28 @@ public void draw() {
       ship.turn(5);
     }
   }
-  ship.setHit(false);
+  ship.hit(false);
   for (int i=0; i<a.length; i++) {
     a[i].show();
     a[i].move();
     if ((abs(ship.getX() - a[i].getX()) <= a[i].getSize()+6) && (abs(ship.getY() - a[i].getY()) <= a[i].getSize()+6)) {
-      ship.setHit(true);
+      ship.hit(true);
     }
+  }
+  if (ship.getHealth() > 0) {
+    fill(230,0,12);
+    noStroke();
+    rect(10,10,ship.getHealth(),20);
+    noFill();
+    stroke(200);
+    rect(10,10,200,20);
+  } else {
+    noLoop();
+    background(100);
+    textSize(20);
+    fill(0);
+    textAlign(CENTER);
+    text("game over", width/2, height/2);
   }
 }
 
