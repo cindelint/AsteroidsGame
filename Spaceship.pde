@@ -21,8 +21,7 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    hit = false;
-    health = 200;
+    health = 100;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}

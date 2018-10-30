@@ -4,12 +4,13 @@ Asteroid[] a;
 
 public void setup() {
   size(500,500);
+  textAlign(CENTER,CENTER);
   ship = new Spaceship();
-  s = new Star[200];
+  s = new Star[230];
   for (int i=0; i<s.length; i++) {
     s[i] = new Star();
   }
-  a = new Asteroid[12];
+  a = new Asteroid[15];
   for (int i=0; i<a.length; i++) {
     a[i] = new Asteroid();
   }
@@ -42,17 +43,19 @@ public void draw() {
   if (ship.getHealth() > 0) {
     fill(230,0,12);
     noStroke();
-    rect(10,10,ship.getHealth(),20);
+    rect(10,10,ship.getHealth()*2,20);
     noFill();
     stroke(200);
     rect(10,10,200,20);
+    fill(255);
+    textSize(13);
+    text(ship.getHealth() + " / 100", 105, 20);
   } else {
     noLoop();
     background(100);
     textSize(20);
     fill(0);
-    textAlign(CENTER);
-    text("game over", width/2, height/2);
+    text("you have died.\n game over", width/2, height/2);
   }
 }
 

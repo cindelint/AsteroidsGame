@@ -20,12 +20,13 @@ Asteroid[] a;
 
 public void setup() {
   
+  textAlign(CENTER,CENTER);
   ship = new Spaceship();
-  s = new Star[200];
+  s = new Star[230];
   for (int i=0; i<s.length; i++) {
     s[i] = new Star();
   }
-  a = new Asteroid[12];
+  a = new Asteroid[15];
   for (int i=0; i<a.length; i++) {
     a[i] = new Asteroid();
   }
@@ -58,16 +59,19 @@ public void draw() {
   if (ship.getHealth() > 0) {
     fill(230,0,12);
     noStroke();
-    rect(10,10,ship.getHealth(),20);
+    rect(10,10,ship.getHealth()*2,20);
     noFill();
     stroke(200);
     rect(10,10,200,20);
+    fill(255);
+    textSize(13);
+    text(ship.getHealth() + " / 100", 105, 20);
   } else {
     noLoop();
     background(100);
     textSize(20);
     fill(0);
-    text("you have died", width/2, height/2);
+    text("you have died.\n game over", width/2, height/2);
   }
 }
 
@@ -86,6 +90,12 @@ class Asteroid extends Floater {
   //private float[] cratersX, cratersY, cratersW;
   //private int numOfCraters;
   Asteroid() {
+    newAsteroid();
+    myColor = color(100);
+    myCenterX = Math.random() * width;
+    myCenterY = Math.random() * height;
+  }
+  private void newAsteroid() {
     corners = (int) (Math.random() * 12) + 10;
     xCorners = new int[corners];
     yCorners = new int[corners];
@@ -94,47 +104,23 @@ class Asteroid extends Floater {
       xCorners[i] = (int) (Math.cos(i * 2 * Math.PI / corners) * (Math.random() * 10 + mySize));
       yCorners[i] = (int) (Math.sin(i * 2 * Math.PI / corners) * (Math.random() * 10 + mySize));
     }
-    myColor = color(100);
-    myCenterX = Math.random() * width;
-    myCenterY = Math.random() * height;
-    myDirectionX = Math.random() * 6 - 3;
-    myDirectionY = Math.random() * 6 - 3;
+    myDirectionX = Math.random() * 7 - 3;
+    myDirectionY = Math.random() * 7 - 3;
     myPointDirection = Math.random() * 360;
-    rotSpeed = (int) (Math.random() * 5 + 3);
+    rotSpeed = (int) (Math.random() * 15 - 7);
   }
-  public void setX(int x) {
-    myCenterX = x;
-  }
-  public int getX() {
-    return (int) myCenterX;
-  }
-  public void setY(int y) {
-    myCenterY = y;
-  }
-  public int getY() {
-    return (int) myCenterY;
-  }
-  public void setDirectionX(double x) {
-    myDirectionX = x;
-  }
-  public double getDirectionX() {
-    return myDirectionX;
-  }
-  public void setDirectionY(double y) {
-    myDirectionY = y;
-  }
-  public double getDirectionY() {
-    return myDirectionY;
-  }
-  public void setPointDirection(int degrees) {
-    myPointDirection = degrees;
-  }
-  public double getPointDirection() {
-    return myPointDirection;
-  }
-  public int getSize() {
-    return mySize;
-  }
+
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int) myCenterX;}
+  public void setY(int y) {myCenterY = y;}
+  public int getY() {return (int) myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}
+  public double getDirectionY() {return myDirectionY;}
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}
+  public double getPointDirection() {return myPointDirection;}
+  public int getSize() {return mySize;}
 
   //overriding to add spin
   public void move () { //move the floater in the current direction of travel
@@ -143,6 +129,9 @@ class Asteroid extends Floater {
     myCenterY += myDirectionY;
 
     //wrap around screen
+    if (myCenterX > width + mySize*2 || myCenterX < -mySize*2 || myCenterY > height + mySize*2 || myCenterY < -mySize*2) {
+      newAsteroid();
+    }
     if (myCenterX > width + mySize*2) {
       myCenterX = -mySize*2;
     } else if (myCenterX < -mySize*2) {
@@ -266,8 +255,7 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    hit = false;
-    health = 200;
+    health = 100;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -329,12 +317,12 @@ class Spaceship extends Floater  {
 class Star //note that this class does NOT extend Floater
 {
   private float myX, myY, mySize, myDirection;
-  private int myColor;
+  private int myColor, myType;
   Star() {
     myX = (float) (Math.random() * width);
     myY = (float) (Math.random() * height);
     mySize = (float) (Math.random() * 3 + 2);
-    myColor = color((int) (Math.random()*100+100), (int) (Math.random()*100+100), (int) (Math.random()*100+100), (int) (Math.random() * 50 + 150));
+    myColor = color((int) (Math.random()*80+120), (int) (Math.random()*80+120), (int) (Math.random()*80+120), (int) (Math.random() * 50 + 150));
     myDirection = (float) (Math.random() * 2*PI);
   }
   private void show() {
