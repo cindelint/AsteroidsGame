@@ -5,23 +5,23 @@ class Spaceship extends Floater  {
     corners = 5;
     xCorners = new int[corners];
     yCorners = new int[corners];
-    xCorners[0] = 16;
+    xCorners[0] = 18;
     yCorners[0] = 0;
-    xCorners[1] = -12;
-    yCorners[1] = -10;
-    xCorners[2] = -8;
-    yCorners[2] = -5;
-    xCorners[3] = -8;
-    yCorners[3] = 5;
-    xCorners[4] = -12;
-    yCorners[4] = 10;
+    xCorners[1] = -14;
+    yCorners[1] = -12;
+    xCorners[2] = -9;
+    yCorners[2] = -7;
+    xCorners[3] = -9;
+    yCorners[3] = 7;
+    xCorners[4] = -14;
+    yCorners[4] = 12;
     myColor = color(200);
     myCenterX = width/2;
     myCenterY = height/2;
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    health = 100;
+    health = 200;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -33,12 +33,13 @@ class Spaceship extends Floater  {
   public double getDirectionY() {return myDirectionY;}
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
+  public void setColor(int c) {myColor = c;}
   public int getHealth() {return health;}
 
   //overriding Floater to add the rockets
   public void show () { //Draws the floater at the current position
     fill(myColor);
-    stroke(myColor);
+    noStroke();
 
     //translate the (x,y) center of the ship to the correct position
     translate((float)myCenterX, (float)myCenterY);
@@ -57,12 +58,18 @@ class Spaceship extends Floater  {
     endShape(CLOSE);
 
     //the rockets
-    if (keyPressed) {
-      fill(255,0,0);
+    if (keyPressed && (keyCode == LEFT || keyCode == RIGHT || keyCode == UP)) {
+      fill(175,0,0);
+      beginShape();
+      vertex(-18, 0);
+      vertex(-9, -3.5);
+      vertex(-9, 3.5);
+      endShape();
+      fill(221, 110, 0);
       beginShape();
       vertex(-15, 0);
-      vertex(-8, -3);
-      vertex(-8, 3);
+      vertex(-9, -2);
+      vertex(-9, 2);
       endShape();
     }
 
@@ -71,12 +78,7 @@ class Spaceship extends Floater  {
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
   }
 
-  public void hit(boolean b) {
-    if (b) {
-      myColor = color(255,0,0,200);
-      health--;
-    } else {
-      myColor = color(200);
-    }
+  public void hit() {
+    health--;
   }
 }

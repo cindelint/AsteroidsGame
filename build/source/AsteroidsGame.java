@@ -17,6 +17,7 @@ public class AsteroidsGame extends PApplet {
 Spaceship ship;
 Star[] s;
 Asteroid[] a;
+int m = 0; //hyperspace millis() count
 
 public void setup() {
   
@@ -48,24 +49,26 @@ public void draw() {
       ship.turn(5);
     }
   }
-  ship.hit(false);
+  ship.setColor(color(200, (millis()-m)/5+25));
   for (int i=0; i<a.length; i++) {
     a[i].show();
     a[i].move();
     if ((abs(ship.getX() - a[i].getX()) <= a[i].getSize()+6) && (abs(ship.getY() - a[i].getY()) <= a[i].getSize()+6)) {
-      ship.hit(true);
+      ship.setColor(color(200,0,0, (millis()-m)/5+25));
+      ship.hit();
     }
   }
   if (ship.getHealth() > 0) {
-    fill(230,0,12);
-    noStroke();
-    rect(10,10,ship.getHealth()*2,20);
+    for (int i=0; i<ship.getHealth(); i++) {
+      stroke(255-i/3, i, 20);
+      line(i+10,10,i+10,30);
+    }
     noFill();
     stroke(200);
     rect(10,10,200,20);
     fill(255);
     textSize(13);
-    text(ship.getHealth() + " / 100", 105, 20);
+    text(ship.getHealth() + " / 200", 105, 20);
   } else {
     noLoop();
     background(100);
@@ -77,6 +80,7 @@ public void draw() {
 
 public void keyPressed() {
   if (key == 'h') { //hyperspace
+    m = millis();
     ship.setX((int) (Math.random() * width));
     ship.setY((int) (Math.random() * height));
     ship.setDirectionX(0);
@@ -239,23 +243,23 @@ class Spaceship extends Floater  {
     corners = 5;
     xCorners = new int[corners];
     yCorners = new int[corners];
-    xCorners[0] = 16;
+    xCorners[0] = 18;
     yCorners[0] = 0;
-    xCorners[1] = -12;
-    yCorners[1] = -10;
-    xCorners[2] = -8;
-    yCorners[2] = -5;
-    xCorners[3] = -8;
-    yCorners[3] = 5;
-    xCorners[4] = -12;
-    yCorners[4] = 10;
+    xCorners[1] = -14;
+    yCorners[1] = -12;
+    xCorners[2] = -9;
+    yCorners[2] = -7;
+    xCorners[3] = -9;
+    yCorners[3] = 7;
+    xCorners[4] = -14;
+    yCorners[4] = 12;
     myColor = color(200);
     myCenterX = width/2;
     myCenterY = height/2;
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    health = 100;
+    health = 200;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -267,12 +271,13 @@ class Spaceship extends Floater  {
   public double getDirectionY() {return myDirectionY;}
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
+  public void setColor(int c) {myColor = c;}
   public int getHealth() {return health;}
 
   //overriding Floater to add the rockets
   public void show () { //Draws the floater at the current position
     fill(myColor);
-    stroke(myColor);
+    noStroke();
 
     //translate the (x,y) center of the ship to the correct position
     translate((float)myCenterX, (float)myCenterY);
@@ -291,12 +296,18 @@ class Spaceship extends Floater  {
     endShape(CLOSE);
 
     //the rockets
-    if (keyPressed) {
-      fill(255,0,0);
+    if (keyPressed && (keyCode == LEFT || keyCode == RIGHT || keyCode == UP)) {
+      fill(175,0,0);
+      beginShape();
+      vertex(-18, 0);
+      vertex(-9, -3.5f);
+      vertex(-9, 3.5f);
+      endShape();
+      fill(221, 110, 0);
       beginShape();
       vertex(-15, 0);
-      vertex(-8, -3);
-      vertex(-8, 3);
+      vertex(-9, -2);
+      vertex(-9, 2);
       endShape();
     }
 
@@ -305,13 +316,8 @@ class Spaceship extends Floater  {
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
   }
 
-  public void hit(boolean b) {
-    if (b) {
-      myColor = color(255,0,0,200);
-      health--;
-    } else {
-      myColor = color(200);
-    }
+  public void hit() {
+    health--;
   }
 }
 class Star //note that this class does NOT extend Floater
