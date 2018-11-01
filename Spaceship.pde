@@ -1,5 +1,4 @@
 class Spaceship extends Floater  {
-  private boolean hit;
   private int health;
   public Spaceship() {
     corners = 5;
@@ -21,7 +20,7 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    health = 200;
+    health = 5;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -35,27 +34,30 @@ class Spaceship extends Floater  {
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
   public int getHealth() {return health;}
-
-  //overriding Floater to add the rockets
-  public void show () { //Draws the floater at the current position
+  public void drawShip(float x, float y, float direction) {
     fill(myColor);
     noStroke();
 
     //translate the (x,y) center of the ship to the correct position
-    translate((float)myCenterX, (float)myCenterY);
+    translate((float)x, (float)y);
 
     //convert degrees to radians for rotate()
-    float dRadians = (float)(myPointDirection*(Math.PI/180));
+    float dRadians = (float)(direction*(Math.PI/180));
 
     //rotate so that the polygon will be drawn in the correct direction
     rotate(dRadians);
-
-    //draw the polygon
     beginShape();
     for (int nI = 0; nI < corners; nI++) {
       vertex(xCorners[nI], yCorners[nI]);
     }
     endShape(CLOSE);
+  }
+
+  //overriding Floater to add the rockets
+  public void show () { //Draws the floater at the current position
+    pushMatrix();
+    //draw the polygon
+    drawShip((float) myCenterX, (float) myCenterY, (float) myPointDirection);
 
     //the rockets
     if (keyPressed && (keyCode == LEFT || keyCode == RIGHT || keyCode == UP)) {
@@ -74,8 +76,9 @@ class Spaceship extends Floater  {
     }
 
     //"unrotate" and "untranslate" in reverse order
-    rotate(-1*dRadians);
-    translate(-1*(float)myCenterX, -1*(float)myCenterY);
+    //rotate(-1*dRadians);
+    //translate(-1*(float)myCenterX, -1*(float)myCenterY);
+    popMatrix();
   }
 
   public void hit() {

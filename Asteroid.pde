@@ -1,8 +1,6 @@
 class Asteroid extends Floater {
   private int rotSpeed;
   private int mySize;
-  //private float[] cratersX, cratersY, cratersW;
-  //private int numOfCraters;
   Asteroid() {
     newAsteroid();
     myColor = color(100);
@@ -10,6 +8,7 @@ class Asteroid extends Floater {
     myCenterY = Math.random() * height;
   }
   private void newAsteroid() {
+    //make asteroids spawn from edges of game !!!
     corners = (int) (Math.random() * 12) + 10;
     xCorners = new int[corners];
     yCorners = new int[corners];

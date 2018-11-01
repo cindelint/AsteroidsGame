@@ -16,7 +16,7 @@ public class AsteroidsGame extends PApplet {
 
 Spaceship ship;
 Star[] s;
-Asteroid[] a;
+ArrayList<Asteroid> a;
 int m = 0; //hyperspace millis() count
 
 public void setup() {
@@ -27,9 +27,9 @@ public void setup() {
   for (int i=0; i<s.length; i++) {
     s[i] = new Star();
   }
-  a = new Asteroid[15];
-  for (int i=0; i<a.length; i++) {
-    a[i] = new Asteroid();
+  a = new ArrayList<Asteroid>();
+  for (int i=0; i<15; i++) {
+    a.add(new Asteroid());
   }
 }
 
@@ -49,16 +49,19 @@ public void draw() {
       ship.turn(5);
     }
   }
-  ship.setColor(color(200, (millis()-m)/5+25));
-  for (int i=0; i<a.length; i++) {
-    a[i].show();
-    a[i].move();
-    if ((abs(ship.getX() - a[i].getX()) <= a[i].getSize()+6) && (abs(ship.getY() - a[i].getY()) <= a[i].getSize()+6)) {
+  ship.setColor(color(200, (millis()-m-5)/5));
+  for (int i=0; i<a.size(); i++) {
+    a.get(i).show();
+    a.get(i).move();
+    if ((abs(ship.getX() - a.get(i).getX()) <= a.get(i).getSize()+6) && (abs(ship.getY() - a.get(i).getY()) <= a.get(i).getSize()+6)) {
       ship.setColor(color(200,0,0, (millis()-m)/5+25));
       ship.hit();
+      a.remove(i);
+      a.add(new Asteroid());
     }
   }
-  if (ship.getHealth() > 0) {
+  if (ship.getHealth() >= 0) {
+    /* HEALTH BAR
     for (int i=0; i<ship.getHealth(); i++) {
       stroke(255-i/3, i, 20);
       line(i+10,10,i+10,30);
@@ -68,7 +71,15 @@ public void draw() {
     rect(10,10,200,20);
     fill(255);
     textSize(13);
-    text(ship.getHealth() + " / 200", 105, 20);
+    text(ship.getHealth() + " / 200", 105, 20); */
+
+    //HEALTH (5)
+    for (int i=0; i<ship.getHealth(); i++) {
+      pushMatrix();
+      scale(.5f);
+      ship.drawShip(10+i*30,20,270);
+      popMatrix();
+    }
   } else {
     noLoop();
     background(100);
@@ -237,7 +248,6 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   }
 } 
 class Spaceship extends Floater  {
-  private boolean hit;
   private int health;
   public Spaceship() {
     corners = 5;
@@ -259,7 +269,7 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    health = 200;
+    health = 5;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -273,27 +283,30 @@ class Spaceship extends Floater  {
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
   public int getHealth() {return health;}
-
-  //overriding Floater to add the rockets
-  public void show () { //Draws the floater at the current position
+  public void drawShip(float x, float y, float direction) {
     fill(myColor);
     noStroke();
 
     //translate the (x,y) center of the ship to the correct position
-    translate((float)myCenterX, (float)myCenterY);
+    translate((float)x, (float)y);
 
     //convert degrees to radians for rotate()
-    float dRadians = (float)(myPointDirection*(Math.PI/180));
+    float dRadians = (float)(direction*(Math.PI/180));
 
     //rotate so that the polygon will be drawn in the correct direction
     rotate(dRadians);
-
-    //draw the polygon
     beginShape();
     for (int nI = 0; nI < corners; nI++) {
       vertex(xCorners[nI], yCorners[nI]);
     }
     endShape(CLOSE);
+  }
+
+  //overriding Floater to add the rockets
+  public void show () { //Draws the floater at the current position
+    pushMatrix();
+    //draw the polygon
+    drawShip((float) myCenterX, (float) myCenterY, (float) myPointDirection);
 
     //the rockets
     if (keyPressed && (keyCode == LEFT || keyCode == RIGHT || keyCode == UP)) {
@@ -312,8 +325,9 @@ class Spaceship extends Floater  {
     }
 
     //"unrotate" and "untranslate" in reverse order
-    rotate(-1*dRadians);
-    translate(-1*(float)myCenterX, -1*(float)myCenterY);
+    //rotate(-1*dRadians);
+    //translate(-1*(float)myCenterX, -1*(float)myCenterY);
+    popMatrix();
   }
 
   public void hit() {
