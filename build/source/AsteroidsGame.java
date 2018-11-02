@@ -15,6 +15,7 @@ import java.io.IOException;
 public class AsteroidsGame extends PApplet {
 
 Spaceship ship;
+ArrayList<Spaceship> health;
 Star[] s;
 ArrayList<Asteroid> a;
 int m = 0; //hyperspace millis() count
@@ -30,6 +31,10 @@ public void setup() {
   a = new ArrayList<Asteroid>();
   for (int i=0; i<15; i++) {
     a.add(new Asteroid());
+  }
+  health = new ArrayList<Spaceship>();
+  for (int i=0; i<5; i++) {
+    health.add(new Spaceship());
   }
 }
 
@@ -53,39 +58,30 @@ public void draw() {
   for (int i=0; i<a.size(); i++) {
     a.get(i).show();
     a.get(i).move();
-    if ((abs(ship.getX() - a.get(i).getX()) <= a.get(i).getSize()+6) && (abs(ship.getY() - a.get(i).getY()) <= a.get(i).getSize()+6)) {
-      ship.setColor(color(200,0,0, (millis()-m)/5+25));
-      ship.hit();
-      a.remove(i);
-      a.add(new Asteroid());
+    if ((abs(ship.getX() - a.get(i).getX()) <= a.get(i).getSize()+6) && (abs(ship.getY() - a.get(i).getY()) <= a.get(i).getSize()+6)) { //asteroid and ship in the same place
+      if (millis() - ship.hitTime >= 2000) { //if ship hasn't been recently hit
+        ship.hit();
+        a.remove(i);
+        a.add(new Asteroid());
+      }
     }
   }
-  if (ship.getHealth() >= 0) {
-    /* HEALTH BAR
-    for (int i=0; i<ship.getHealth(); i++) {
-      stroke(255-i/3, i, 20);
-      line(i+10,10,i+10,30);
+  if (millis() - ship.hitTime < 1800) {
+    if ((int) ((millis() - ship.hitTime)/300) % 2 == 0) {
+      //timestamps 0-300, 600-900, 1200-1500. fade out
+      ship.setColor(color(200,300-((millis()-ship.hitTime)%300)));
+    } else {
+      //timestamps 300-600, 900-1200, 1500-1800. fade in
+      ship.setColor(color(200,(millis()-ship.hitTime)%300));
     }
-    noFill();
-    stroke(200);
-    rect(10,10,200,20);
-    fill(255);
-    textSize(13);
-    text(ship.getHealth() + " / 200", 105, 20); */
+  }
 
-    //HEALTH (5)
-    for (int i=0; i<ship.getHealth(); i++) {
-      pushMatrix();
-      scale(.5f);
-      ship.drawShip(10+i*30,20,270);
-      popMatrix();
-    }
-  } else {
-    noLoop();
-    background(100);
-    textSize(20);
-    fill(0);
-    text("you have died.\n game over", width/2, height/2);
+  //HEALTH (5)
+  for (int i=0; i<health.size(); i++) {
+    pushMatrix();
+    scale(.5f);
+    health.get(i).drawShip(10+i*30,20,270);
+    popMatrix();
   }
 }
 
@@ -102,15 +98,16 @@ public void keyPressed() {
 class Asteroid extends Floater {
   private int rotSpeed;
   private int mySize;
-  //private float[] cratersX, cratersY, cratersW;
-  //private int numOfCraters;
   Asteroid() {
     newAsteroid();
     myColor = color(100);
-    myCenterX = Math.random() * width;
-    myCenterY = Math.random() * height;
+    int randX = (int) (Math.random() * 2);
+    int randY = (int) (Math.random() * 2);
+    myCenterX = (Math.random() * width/5) + randX*(4*width/5);
+    myCenterY = (Math.random() * width/5) + randY*(4*width/5);
   }
   private void newAsteroid() {
+    //make asteroids spawn from edges of game !!!
     corners = (int) (Math.random() * 12) + 10;
     xCorners = new int[corners];
     yCorners = new int[corners];
@@ -248,7 +245,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   }
 } 
 class Spaceship extends Floater  {
-  private int health;
+  private int hitTime;
   public Spaceship() {
     corners = 5;
     xCorners = new int[corners];
@@ -269,7 +266,7 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    health = 5;
+    hitTime = -5000;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -282,7 +279,6 @@ class Spaceship extends Floater  {
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
-  public int getHealth() {return health;}
   public void drawShip(float x, float y, float direction) {
     fill(myColor);
     noStroke();
@@ -325,13 +321,22 @@ class Spaceship extends Floater  {
     }
 
     //"unrotate" and "untranslate" in reverse order
-    //rotate(-1*dRadians);
-    //translate(-1*(float)myCenterX, -1*(float)myCenterY);
+    /* rotate(-1*dRadians);
+    translate(-1*(float)myCenterX, -1*(float)myCenterY); */
     popMatrix();
   }
 
   public void hit() {
-    health--;
+    hitTime = (int) millis();
+    if (health.size() > 0) {
+      health.remove(0);
+    } else {
+      noLoop();
+      background(100);
+      textSize(20);
+      fill(0);
+      text("you have died.\n game over", width/2, height/2);
+    }
   }
 }
 class Star //note that this class does NOT extend Floater

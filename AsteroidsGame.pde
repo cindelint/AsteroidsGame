@@ -1,4 +1,5 @@
 Spaceship ship;
+ArrayList<Spaceship> health;
 Star[] s;
 ArrayList<Asteroid> a;
 int m = 0; //hyperspace millis() count
@@ -14,6 +15,10 @@ public void setup() {
   a = new ArrayList<Asteroid>();
   for (int i=0; i<15; i++) {
     a.add(new Asteroid());
+  }
+  health = new ArrayList<Spaceship>();
+  for (int i=0; i<5; i++) {
+    health.add(new Spaceship());
   }
 }
 
@@ -37,39 +42,30 @@ public void draw() {
   for (int i=0; i<a.size(); i++) {
     a.get(i).show();
     a.get(i).move();
-    if ((abs(ship.getX() - a.get(i).getX()) <= a.get(i).getSize()+6) && (abs(ship.getY() - a.get(i).getY()) <= a.get(i).getSize()+6)) {
-      ship.setColor(color(200,0,0, (millis()-m)/5+25));
-      ship.hit();
-      a.remove(i);
-      a.add(new Asteroid());
+    if ((abs(ship.getX() - a.get(i).getX()) <= a.get(i).getSize()+6) && (abs(ship.getY() - a.get(i).getY()) <= a.get(i).getSize()+6)) { //asteroid and ship in the same place
+      if (millis() - ship.hitTime >= 2000) { //if ship hasn't been recently hit
+        ship.hit();
+        a.remove(i);
+        a.add(new Asteroid());
+      }
     }
   }
-  if (ship.getHealth() >= 0) {
-    //HEALTH BAR (dead now)
-    /* for (int i=0; i<ship.getHealth(); i++) {
-      stroke(255-i/3, i, 20);
-      line(i+10,10,i+10,30);
+  if (millis() - ship.hitTime < 1800) {
+    if ((int) ((millis() - ship.hitTime)/300) % 2 == 0) {
+      //timestamps 0-300, 600-900, 1200-1500. fade out
+      ship.setColor(color(200,300-((millis()-ship.hitTime)%300)));
+    } else {
+      //timestamps 300-600, 900-1200, 1500-1800. fade in
+      ship.setColor(color(200,(millis()-ship.hitTime)%300));
     }
-    noFill();
-    stroke(200);
-    rect(10,10,200,20);
-    fill(255);
-    textSize(13);
-    text(ship.getHealth() + " / 200", 105, 20); */
+  }
 
-    //HEALTH (5)
-    for (int i=0; i<ship.getHealth(); i++) {
-      pushMatrix();
-      scale(.5);
-      ship.drawShip(10+i*30,20,270);
-      popMatrix();
-    }
-  } else {
-    noLoop();
-    background(100);
-    textSize(20);
-    fill(0);
-    text("you have died.\n game over", width/2, height/2);
+  //HEALTH (5)
+  for (int i=0; i<health.size(); i++) {
+    pushMatrix();
+    scale(.5);
+    health.get(i).drawShip(10+i*30,20,270);
+    popMatrix();
   }
 }
 

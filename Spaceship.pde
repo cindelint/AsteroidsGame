@@ -1,5 +1,5 @@
 class Spaceship extends Floater  {
-  private int health;
+  private int hitTime;
   public Spaceship() {
     corners = 5;
     xCorners = new int[corners];
@@ -20,7 +20,7 @@ class Spaceship extends Floater  {
     myDirectionX = 0;
     myDirectionY = 0;
     myPointDirection = 0;
-    health = 5;
+    hitTime = -5000;
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -33,7 +33,6 @@ class Spaceship extends Floater  {
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
-  public int getHealth() {return health;}
   public void drawShip(float x, float y, float direction) {
     fill(myColor);
     noStroke();
@@ -76,12 +75,21 @@ class Spaceship extends Floater  {
     }
 
     //"unrotate" and "untranslate" in reverse order
-    //rotate(-1*dRadians);
-    //translate(-1*(float)myCenterX, -1*(float)myCenterY);
+    /* rotate(-1*dRadians);
+    translate(-1*(float)myCenterX, -1*(float)myCenterY); */
     popMatrix();
   }
 
   public void hit() {
-    health--;
+    hitTime = (int) millis();
+    if (health.size() > 0) {
+      health.remove(0);
+    } else {
+      noLoop();
+      background(100);
+      textSize(20);
+      fill(0);
+      text("you have died.\n game over", width/2, height/2);
+    }
   }
 }

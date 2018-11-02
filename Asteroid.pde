@@ -4,8 +4,10 @@ class Asteroid extends Floater {
   Asteroid() {
     newAsteroid();
     myColor = color(100);
-    myCenterX = Math.random() * width;
-    myCenterY = Math.random() * height;
+    int randX = (int) (Math.random() * 2);
+    int randY = (int) (Math.random() * 2);
+    myCenterX = (Math.random() * width/5) + randX*(4*width/5);
+    myCenterY = (Math.random() * width/5) + randY*(4*width/5);
   }
   private void newAsteroid() {
     //make asteroids spawn from edges of game !!!
