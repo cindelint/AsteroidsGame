@@ -74,9 +74,6 @@ class Spaceship extends Floater  {
       endShape();
     }
 
-    //"unrotate" and "untranslate" in reverse order
-    /* rotate(-1*dRadians);
-    translate(-1*(float)myCenterX, -1*(float)myCenterY); */
     popMatrix();
   }
 

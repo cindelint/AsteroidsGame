@@ -19,6 +19,7 @@ ArrayList<Spaceship> health;
 Star[] s;
 ArrayList<Asteroid> a;
 int m = 0; //hyperspace millis() count
+ArrayList<Bullet> b;
 
 public void setup() {
   
@@ -53,25 +54,37 @@ public void draw() {
     } else if (keyCode == RIGHT) {
       ship.turn(5);
     }
+    if (key == ' ') {
+      b.add(new Bullet(ship));
+    }
   }
+
   ship.setColor(color(200, (millis()-m-5)/5));
+
   for (int i=0; i<a.size(); i++) {
     a.get(i).show();
     a.get(i).move();
-    if ((abs(ship.getX() - a.get(i).getX()) <= a.get(i).getSize()+6) && (abs(ship.getY() - a.get(i).getY()) <= a.get(i).getSize()+6)) { //asteroid and ship in the same place
-      if (millis() - ship.hitTime >= 2000) { //if ship hasn't been recently hit
+    if (dist(ship.getX(), ship.getY(), a.get(i).getX(), a.get(i).getY()) <= a.get(i).getSize()+6) {
+      if (millis() - ship.hitTime >= 3300) { //if ship hasn't been recently hit
         ship.hit();
         a.remove(i);
         a.add(new Asteroid());
       }
     }
   }
-  if (millis() - ship.hitTime < 1800) {
+  if (b != null) {
+    for (int i=0; i<b.size(); i++) {
+      b.get(i).show();
+      b.get(i).move();
+    }
+  }
+
+  if (millis() - ship.hitTime < 3000) {
     if ((int) ((millis() - ship.hitTime)/300) % 2 == 0) {
-      //timestamps 0-300, 600-900, 1200-1500. fade out
+      //timestamps 0-300, 600-900, 1200-1500, 1800-2100, 2400-2700. fade out
       ship.setColor(color(200,300-((millis()-ship.hitTime)%300)));
     } else {
-      //timestamps 300-600, 900-1200, 1500-1800. fade in
+      //timestamps 300-600, 900-1200, 1500-1800, 2100-2400,2700-3000. fade in
       ship.setColor(color(200,(millis()-ship.hitTime)%300));
     }
   }
@@ -107,7 +120,6 @@ class Asteroid extends Floater {
     myCenterY = (Math.random() * width/5) + randY*(4*width/5);
   }
   private void newAsteroid() {
-    //make asteroids spawn from edges of game !!!
     corners = (int) (Math.random() * 12) + 10;
     xCorners = new int[corners];
     yCorners = new int[corners];
@@ -136,27 +148,35 @@ class Asteroid extends Floater {
 
   //overriding to add spin
   public void move () { //move the floater in the current direction of travel
-    //change the x and y coordinates by myDirectionX and myDirectionY
-    myCenterX += myDirectionX;
-    myCenterY += myDirectionY;
-
-    //wrap around screen
-    if (myCenterX > width + mySize*2 || myCenterX < -mySize*2 || myCenterY > height + mySize*2 || myCenterY < -mySize*2) {
-      newAsteroid();
-    }
-    if (myCenterX > width + mySize*2) {
-      myCenterX = -mySize*2;
-    } else if (myCenterX < -mySize*2) {
-      myCenterX = width + mySize*2;
-    }
-    if (myCenterY > height + mySize*2) {
-      myCenterY = -mySize*2;
-    } else if (myCenterY < -mySize*2) {
-      myCenterY = height + mySize*2;
-    }
-
+    super.move();
     turn(rotSpeed);
   }
+}
+class Bullet extends Floater {
+  public Bullet (Spaceship theShip) {
+    myCenterX = theShip.getX();
+    myCenterY = theShip.getY();
+    myPointDirection = theShip.getPointDirection();
+    double dRadians = myPointDirection*(Math.PI/180);
+    myDirectionX = 5*Math.cos(dRadians) + theShip.getDirectionX();
+    myDirectionY = 5*Math.sin(dRadians) + theShip.getDirectionY();
+    myColor = (255);
+  }
+  public void show() {
+    noStroke();
+    fill(myColor);
+    ellipse((float) myCenterX, (float) myCenterY, 5, 5);
+  }
+  public void setX(int x) {myCenterX = x;}
+  public int getX() {return (int) myCenterX;}
+  public void setY(int y) {myCenterY = y;}
+  public int getY() {return (int) myCenterY;}
+  public void setDirectionX(double x) {myDirectionX = x;}
+  public double getDirectionX() {return myDirectionX;}
+  public void setDirectionY(double y) {myDirectionY = y;}
+  public double getDirectionY() {return myDirectionY;}
+  public void setPointDirection(int degrees) {myPointDirection = degrees;}
+  public double getPointDirection() {return myPointDirection;}
 }
 abstract class Floater //Do NOT modify the Floater class! Make changes in the Spaceship class
 {
@@ -320,9 +340,6 @@ class Spaceship extends Floater  {
       endShape();
     }
 
-    //"unrotate" and "untranslate" in reverse order
-    /* rotate(-1*dRadians);
-    translate(-1*(float)myCenterX, -1*(float)myCenterY); */
     popMatrix();
   }
 

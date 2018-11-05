@@ -10,7 +10,6 @@ class Asteroid extends Floater {
     myCenterY = (Math.random() * width/5) + randY*(4*width/5);
   }
   private void newAsteroid() {
-    //make asteroids spawn from edges of game !!!
     corners = (int) (Math.random() * 12) + 10;
     xCorners = new int[corners];
     yCorners = new int[corners];
@@ -39,25 +38,7 @@ class Asteroid extends Floater {
 
   //overriding to add spin
   public void move () { //move the floater in the current direction of travel
-    //change the x and y coordinates by myDirectionX and myDirectionY
-    myCenterX += myDirectionX;
-    myCenterY += myDirectionY;
-
-    //wrap around screen
-    if (myCenterX > width + mySize*2 || myCenterX < -mySize*2 || myCenterY > height + mySize*2 || myCenterY < -mySize*2) {
-      newAsteroid();
-    }
-    if (myCenterX > width + mySize*2) {
-      myCenterX = -mySize*2;
-    } else if (myCenterX < -mySize*2) {
-      myCenterX = width + mySize*2;
-    }
-    if (myCenterY > height + mySize*2) {
-      myCenterY = -mySize*2;
-    } else if (myCenterY < -mySize*2) {
-      myCenterY = height + mySize*2;
-    }
-
+    super.move();
     turn(rotSpeed);
   }
 }
