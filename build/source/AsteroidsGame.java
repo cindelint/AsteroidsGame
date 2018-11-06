@@ -37,6 +37,7 @@ public void setup() {
   for (int i=0; i<5; i++) {
     health.add(new Spaceship());
   }
+  b = new ArrayList<Bullet>();
 }
 
 public void draw() {
@@ -53,9 +54,6 @@ public void draw() {
       ship.turn(-5);
     } else if (keyCode == RIGHT) {
       ship.turn(5);
-    }
-    if (key == ' ') {
-      b.add(new Bullet(ship));
     }
   }
 
@@ -76,6 +74,18 @@ public void draw() {
     for (int i=0; i<b.size(); i++) {
       b.get(i).show();
       b.get(i).move();
+      for (int j=0; j<a.size(); j++) {
+        if (a != null && dist(a.get(j).getX(), a.get(j).getY(), b.get(i).getX(), b.get(i).getY()) <= a.get(j).getSize()+3) {
+          a.remove(j);
+          b.remove(i);
+          if (j == a.size() && j != 0) {
+            j--;
+          }
+          if (i == b.size() && i != 0) {
+            i--;
+          }
+        }
+      }
     }
   }
 
@@ -106,6 +116,9 @@ public void keyPressed() {
     ship.setDirectionX(0);
     ship.setDirectionY(0);
     ship.setPointDirection(0);
+  }
+  if (key == ' ') {
+    b.add(new Bullet(ship));
   }
 }
 class Asteroid extends Floater {
@@ -160,12 +173,12 @@ class Bullet extends Floater {
     double dRadians = myPointDirection*(Math.PI/180);
     myDirectionX = 5*Math.cos(dRadians) + theShip.getDirectionX();
     myDirectionY = 5*Math.sin(dRadians) + theShip.getDirectionY();
-    myColor = (255);
+    myColor = color(255, (int) (Math.random() * 70 + 180), 50);
   }
   public void show() {
     noStroke();
     fill(myColor);
-    ellipse((float) myCenterX, (float) myCenterY, 5, 5);
+    ellipse((float) myCenterX, (float) myCenterY, 6, 6);
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
