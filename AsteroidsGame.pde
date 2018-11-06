@@ -70,6 +70,9 @@ public void draw() {
           }
         }
       }
+      if (b.get(i).getX() > width+10) {
+        b.remove(i);
+      }
     }
   }
 
