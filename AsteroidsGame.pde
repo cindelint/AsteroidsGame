@@ -5,11 +5,14 @@ ArrayList<Asteroid> a;
 int m = 0; //hyperspace millis() count
 ArrayList<Bullet> b;
 
+//keys being pressed
+boolean up, left, right, space;
+
 public void setup() {
-  size(500,500);
+  size(700,700);
   textAlign(CENTER,CENTER);
   ship = new Spaceship();
-  s = new Star[230];
+  s = new Star[250];
   for (int i=0; i<s.length; i++) {
     s[i] = new Star();
   }
@@ -22,6 +25,10 @@ public void setup() {
     health.add(new Spaceship());
   }
   b = new ArrayList<Bullet>();
+
+  up = false;
+  left = false;
+  right = false;
 }
 
 public void draw() {
@@ -31,21 +38,18 @@ public void draw() {
   }
   ship.show();
   ship.move();
-  if (keyPressed) {
-    if (keyCode == UP) {
-      ship.accelerate(0.1);
-    } else if (keyCode == LEFT) {
-      ship.turn(-5);
-    } else if (keyCode == RIGHT) {
-      ship.turn(5);
-    }
-  }
+
+  if (up) ship.accelerate(0.1);
+  if (left) ship.turn(-5);
+  if (right) ship.turn(5);
 
   ship.setColor(color(200, (millis()-m-5)/5));
 
+  //show and move asteroids
   for (int i=0; i<a.size(); i++) {
     a.get(i).show();
     a.get(i).move();
+    //if asteroids hit ship, ship loses health and asteroid disappears
     if (dist(ship.getX(), ship.getY(), a.get(i).getX(), a.get(i).getY()) <= a.get(i).getSize()+6) {
       if (millis() - ship.hitTime >= 3300) { //if ship hasn't been recently hit
         ship.hit();
@@ -54,24 +58,29 @@ public void draw() {
       }
     }
   }
+
+  //show and move bullets
   if (b != null) {
     for (int i=0; i<b.size(); i++) {
       b.get(i).show();
       b.get(i).move();
-      for (int j=0; j<a.size(); j++) {
-        if (a != null && dist(a.get(j).getX(), a.get(j).getY(), b.get(i).getX(), b.get(i).getY()) <= a.get(j).getSize()+3) {
+    }
+  }
+
+  //if bullet hit asteroid, both die
+  if (a != null && b != null) {
+    for (int i=0; i<b.size(); i++) { //for all bullets
+      //if out of bounds, remove bullet
+      if (b.get(i).getX() >= width || b.get(i).getX() <= 0 || b.get(i).getY() >= height || b.get(i).getY() <= 0) {
+        b.remove(i);
+        break;
+      }
+      for (int j=0; j<a.size(); j++) { //for all asteroids
+        if (dist(a.get(j).getX(), a.get(j).getY(), b.get(i).getX(), b.get(i).getY()) <= a.get(j).getSize()+3) {
           a.remove(j);
           b.remove(i);
-          if (j == a.size() && j != 0) {
-            j--;
-          }
-          if (i == b.size() && i != 0) {
-            i--;
-          }
+          break;
         }
-      }
-      if (b.get(i).getX() > width+10) {
-        b.remove(i);
       }
     }
   }
@@ -96,7 +105,10 @@ public void draw() {
 }
 
 public void keyPressed() {
-  if (key == 'h') { //hyperspace
+  if (keyCode == UP || key == 'w') up = true;
+  else if (keyCode == LEFT || key == 'a') left = true;
+  else if (keyCode == RIGHT || key == 'd') right = true;
+  if (key == 's') { //hyperspace
     m = millis();
     ship.setX((int) (Math.random() * width));
     ship.setY((int) (Math.random() * height));
@@ -107,4 +119,10 @@ public void keyPressed() {
   if (key == ' ') {
     b.add(new Bullet(ship));
   }
+}
+
+public void keyReleased() {
+  if (keyCode == UP || key == 'w') up = false;
+  else if (keyCode == LEFT || key == 'a') left = false;
+  else if (keyCode == RIGHT || key == 'd') right = false;
 }
