@@ -6,7 +6,7 @@ int m = 0; //hyperspace millis() count
 ArrayList<Bullet> b;
 
 //keys being pressed
-boolean up, left, right, space;
+boolean up, left, right;
 
 public void setup() {
   size(700,700);
@@ -69,10 +69,10 @@ public void draw() {
 
   //if bullet hit asteroid, both die
   if (a != null && b != null) {
-    for (int i=0; i<b.size(); i++) { //for all bullets
+    for (Bullet bees : b) { //for all bullets
       //if out of bounds, remove bullet
-      if (b.get(i).getX() >= width || b.get(i).getX() <= 0 || b.get(i).getY() >= height || b.get(i).getY() <= 0) {
-        b.remove(i);
+      if (bees.getX() >= width || bees.getX() <= 0 || bees.getY() >= height || bees.getY() <= 0) {
+        bees.remove(i);
         break;
       }
       for (int j=0; j<a.size(); j++) { //for all asteroids
@@ -108,7 +108,7 @@ public void keyPressed() {
   if (keyCode == UP || key == 'w') up = true;
   else if (keyCode == LEFT || key == 'a') left = true;
   else if (keyCode == RIGHT || key == 'd') right = true;
-  if (key == 's') { //hyperspace
+  if (keyCode == DOWN || key == 's') { //hyperspace
     m = millis();
     ship.setX((int) (Math.random() * width));
     ship.setY((int) (Math.random() * height));

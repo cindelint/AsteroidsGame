@@ -1,5 +1,6 @@
 class Spaceship extends Floater  {
   private int hitTime;
+  private String design;
   public Spaceship() {
     corners = 5;
     xCorners = new int[corners];
@@ -21,6 +22,7 @@ class Spaceship extends Floater  {
     myDirectionY = 0;
     myPointDirection = 0;
     hitTime = -5000;
+    design = "lightning";
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -33,6 +35,20 @@ class Spaceship extends Floater  {
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
+  private void drawDesign(int designColor) {
+    fill(designColor);
+    noStroke();
+    beginShape();
+    if (design == "lightning") {
+      vertex(12,1);
+      vertex(-1,-4);
+      vertex(0,1);
+      vertex(-8,-1);
+      vertex(3,4);
+      vertex(2,-1);
+    }
+    endShape();
+  }
   public void drawShip(float x, float y, float direction) {
     fill(myColor);
     noStroke();
@@ -50,10 +66,12 @@ class Spaceship extends Floater  {
       vertex(xCorners[nI], yCorners[nI]);
     }
     endShape(CLOSE);
+
+    drawDesign(color(100));
   }
 
   //overriding Floater to add the rockets
-  public void show () { //Draws the floater at the current position
+  public void show() { //Draws the floater at the current position
     pushMatrix();
     //draw the polygon
     drawShip((float) myCenterX, (float) myCenterY, (float) myPointDirection);

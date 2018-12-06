@@ -22,7 +22,7 @@ int m = 0; //hyperspace millis() count
 ArrayList<Bullet> b;
 
 //keys being pressed
-boolean up, left, right, space;
+boolean up, left, right;
 
 public void setup() {
   
@@ -85,10 +85,10 @@ public void draw() {
 
   //if bullet hit asteroid, both die
   if (a != null && b != null) {
-    for (int i=0; i<b.size(); i++) { //for all bullets
+    for (Bullet bees : b) { //for all bullets
       //if out of bounds, remove bullet
-      if (b.get(i).getX() >= width || b.get(i).getX() <= 0 || b.get(i).getY() >= height || b.get(i).getY() <= 0) {
-        b.remove(i);
+      if (bees.getX() >= width || bees.getX() <= 0 || bees.getY() >= height || bees.getY() <= 0) {
+        bees.remove(i);
         break;
       }
       for (int j=0; j<a.size(); j++) { //for all asteroids
@@ -124,7 +124,7 @@ public void keyPressed() {
   if (keyCode == UP || key == 'w') up = true;
   else if (keyCode == LEFT || key == 'a') left = true;
   else if (keyCode == RIGHT || key == 'd') right = true;
-  if (key == 's') { //hyperspace
+  if (keyCode == DOWN || key == 's') { //hyperspace
     m = millis();
     ship.setX((int) (Math.random() * width));
     ship.setY((int) (Math.random() * height));
@@ -300,6 +300,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
 } 
 class Spaceship extends Floater  {
   private int hitTime;
+  private String design;
   public Spaceship() {
     corners = 5;
     xCorners = new int[corners];
@@ -321,6 +322,7 @@ class Spaceship extends Floater  {
     myDirectionY = 0;
     myPointDirection = 0;
     hitTime = -5000;
+    design = "lightning";
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -333,6 +335,20 @@ class Spaceship extends Floater  {
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
+  private void drawDesign(int designColor) {
+    fill(designColor);
+    noStroke();
+    beginShape();
+    if (design == "lightning") {
+      vertex(12,1);
+      vertex(-1,-4);
+      vertex(0,1);
+      vertex(-8,-1);
+      vertex(3,4);
+      vertex(2,-1);
+    }
+    endShape();
+  }
   public void drawShip(float x, float y, float direction) {
     fill(myColor);
     noStroke();
@@ -350,10 +366,12 @@ class Spaceship extends Floater  {
       vertex(xCorners[nI], yCorners[nI]);
     }
     endShape(CLOSE);
+
+    drawDesign(color(100));
   }
 
   //overriding Floater to add the rockets
-  public void show () { //Draws the floater at the current position
+  public void show() { //Draws the floater at the current position
     pushMatrix();
     //draw the polygon
     drawShip((float) myCenterX, (float) myCenterY, (float) myPointDirection);
