@@ -4,6 +4,7 @@ Star[] s;
 ArrayList<Asteroid> a;
 int m = 0; //hyperspace millis() count
 ArrayList<Bullet> b;
+ArrayList<PowerUp> p;
 
 //keys being pressed
 boolean up, left, right;
@@ -25,6 +26,8 @@ public void setup() {
     health.add(new Spaceship());
   }
   b = new ArrayList<Bullet>();
+
+  p = new ArrayList<PowerUp>();
 
   up = false;
   left = false;
@@ -69,10 +72,10 @@ public void draw() {
 
   //if bullet hit asteroid, both die
   if (a != null && b != null) {
-    for (Bullet bees : b) { //for all bullets
+    for (int i=0; i<b.size(); i++) { //for all bullets
       //if out of bounds, remove bullet
-      if (bees.getX() >= width || bees.getX() <= 0 || bees.getY() >= height || bees.getY() <= 0) {
-        bees.remove(i);
+      if (b.get(i).getX() >= width || b.get(i).getX() <= 0 || b.get(i).getY() >= height || b.get(i).getY() <= 0) {
+        b.remove(i);
         break;
       }
       for (int j=0; j<a.size(); j++) { //for all asteroids
@@ -85,6 +88,7 @@ public void draw() {
     }
   }
 
+  //recovery time
   if (millis() - ship.hitTime < 3000) {
     if ((int) ((millis() - ship.hitTime)/300) % 2 == 0) {
       //timestamps 0-300, 600-900, 1200-1500, 1800-2100, 2400-2700. fade out
@@ -101,6 +105,19 @@ public void draw() {
     scale(.5);
     health.get(i).drawShip(10+i*30,20,270);
     popMatrix();
+  }
+
+  //powerups
+  if (Math.random() < .005 && p.size() < 4) {
+    p.add(new PowerUp());
+  }
+  for (PowerUp i: p) {
+    if (dist(ship.getX(),ship.getY(),i.getX(),i.getY()) < 10) {
+      i.setColor(color(181, 61, 61));
+    } else {
+      i.setColor(color(175, 22, 22));
+    }
+    i.show();
   }
 }
 

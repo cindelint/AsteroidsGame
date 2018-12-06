@@ -20,6 +20,7 @@ Star[] s;
 ArrayList<Asteroid> a;
 int m = 0; //hyperspace millis() count
 ArrayList<Bullet> b;
+ArrayList<PowerUp> p;
 
 //keys being pressed
 boolean up, left, right;
@@ -41,6 +42,8 @@ public void setup() {
     health.add(new Spaceship());
   }
   b = new ArrayList<Bullet>();
+
+  p = new ArrayList<PowerUp>();
 
   up = false;
   left = false;
@@ -85,10 +88,10 @@ public void draw() {
 
   //if bullet hit asteroid, both die
   if (a != null && b != null) {
-    for (Bullet bees : b) { //for all bullets
+    for (int i=0; i<b.size(); i++) { //for all bullets
       //if out of bounds, remove bullet
-      if (bees.getX() >= width || bees.getX() <= 0 || bees.getY() >= height || bees.getY() <= 0) {
-        bees.remove(i);
+      if (b.get(i).getX() >= width || b.get(i).getX() <= 0 || b.get(i).getY() >= height || b.get(i).getY() <= 0) {
+        b.remove(i);
         break;
       }
       for (int j=0; j<a.size(); j++) { //for all asteroids
@@ -101,6 +104,7 @@ public void draw() {
     }
   }
 
+  //recovery time
   if (millis() - ship.hitTime < 3000) {
     if ((int) ((millis() - ship.hitTime)/300) % 2 == 0) {
       //timestamps 0-300, 600-900, 1200-1500, 1800-2100, 2400-2700. fade out
@@ -117,6 +121,19 @@ public void draw() {
     scale(.5f);
     health.get(i).drawShip(10+i*30,20,270);
     popMatrix();
+  }
+
+  //powerups
+  if (Math.random() < .005f && p.size() < 4) {
+    p.add(new PowerUp());
+  }
+  for (PowerUp i: p) {
+    if (dist(ship.getX(),ship.getY(),i.getX(),i.getY()) < 10) {
+      i.setColor(color(181, 61, 61));
+    } else {
+      i.setColor(color(175, 22, 22));
+    }
+    i.show();
   }
 }
 
@@ -298,6 +315,45 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
     translate(-1*(float)myCenterX, -1*(float)myCenterY);
   }
 } 
+class PowerUp {
+  private int myX, myY;
+  private String[] typeList = new String[] {"laser","explosion","design","spaceshipColor","gainHealth"};
+  private int type;
+  private int myColor;
+  public PowerUp() {
+    myX = (int) (Math.random() * width);
+    myY = (int) (Math.random() * height);
+    type = (int) (Math.random() * typeList.length);
+    myColor = color(175, 22, 22);
+  }
+  public int getX() {return myX;}
+  public int getY() {return myY;}
+  public void setColor(int x) {myColor = x;}
+  public void show() {
+    fill(myColor);
+    stroke(myColor, 20);
+    rect(myX, myY, 20, 20);
+  }
+  public void effect() {
+    switch(typeList[type]) {
+      case "laser":
+        System.out.println("laser");
+        break;
+      case "explosion":
+        System.out.println("explosion");
+        break;
+      case "design":
+        System.out.println("design");
+        break;
+      case "spaceshipColor":
+        System.out.println("color");
+        break;
+      case "gainHealth":
+        System.out.println("health");
+        break;
+    }
+  }
+}
 class Spaceship extends Floater  {
   private int hitTime;
   private String design;
