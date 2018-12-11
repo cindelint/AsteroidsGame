@@ -15,9 +15,10 @@ class PowerUp {
   public void show() {
     fill(myColor);
     stroke(myColor, 20);
+    rectMode(CENTER);
     rect(myX, myY, 20, 20);
   }
-  public void effect() {
+  public void pickUp() {
     switch(typeList[type]) {
       case "laser":
         System.out.println("laser");
@@ -26,13 +27,14 @@ class PowerUp {
         System.out.println("explosion");
         break;
       case "design":
-        System.out.println("design");
+        ship.setDesign("lightning");
         break;
       case "spaceshipColor":
-        System.out.println("color");
+        ship.setColor(color(175, 22, 22));
+        println("color");
         break;
       case "gainHealth":
-        System.out.println("health");
+        health.add(new Spaceship());
         break;
     }
   }

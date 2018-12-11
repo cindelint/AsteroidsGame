@@ -22,7 +22,7 @@ class Spaceship extends Floater  {
     myDirectionY = 0;
     myPointDirection = 0;
     hitTime = -5000;
-    design = "lightning";
+    design = " ";
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -35,6 +35,9 @@ class Spaceship extends Floater  {
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
+  public color getColor() {return myColor;}
+  public void setDesign(String s) {design = s;}
+
   private void drawDesign(int designColor) {
     fill(designColor);
     noStroke();
@@ -101,7 +104,10 @@ class Spaceship extends Floater  {
       health.remove(0);
     } else {
       noLoop();
-      background(100);
+      for (int i=p.size()-1; i>=0; i--)  p.remove(i);
+      for (int i=a.size()-1; i>=0; i--)  a.remove(i);
+      for (int i=b.size()-1; i>=0; i--)  b.remove(i);
+      background(70);
       textSize(20);
       fill(0);
       text("you have died.\n game over", width/2, height/2);

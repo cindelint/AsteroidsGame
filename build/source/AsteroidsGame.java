@@ -71,9 +71,9 @@ public void draw() {
     //if asteroids hit ship, ship loses health and asteroid disappears
     if (dist(ship.getX(), ship.getY(), a.get(i).getX(), a.get(i).getY()) <= a.get(i).getSize()+6) {
       if (millis() - ship.hitTime >= 3300) { //if ship hasn't been recently hit
-        ship.hit();
         a.remove(i);
         a.add(new Asteroid());
+        ship.hit();
       }
     }
   }
@@ -108,10 +108,10 @@ public void draw() {
   if (millis() - ship.hitTime < 3000) {
     if ((int) ((millis() - ship.hitTime)/300) % 2 == 0) {
       //timestamps 0-300, 600-900, 1200-1500, 1800-2100, 2400-2700. fade out
-      ship.setColor(color(200,300-((millis()-ship.hitTime)%300)));
+      ship.setColor(color(ship.getColor(),300-((millis()-ship.hitTime)%300)));
     } else {
       //timestamps 300-600, 900-1200, 1500-1800, 2100-2400,2700-3000. fade in
-      ship.setColor(color(200,(millis()-ship.hitTime)%300));
+      ship.setColor(color(ship.getColor(),(millis()-ship.hitTime)%300));
     }
   }
 
@@ -127,13 +127,18 @@ public void draw() {
   if (Math.random() < .005f && p.size() < 4) {
     p.add(new PowerUp());
   }
-  for (PowerUp i: p) {
-    if (dist(ship.getX(),ship.getY(),i.getX(),i.getY()) < 10) {
-      i.setColor(color(181, 61, 61));
+  for (int i=0; i<p.size(); i++) {
+    if (dist(ship.getX(),ship.getY(),p.get(i).getX(),p.get(i).getY()) < 18) {
+      p.get(i).setColor(color(0));
+      if (keyPressed && (keyCode == DOWN || key == 's')) {
+        p.get(i).pickUp();
+        p.remove(i);
+        break;
+      }
     } else {
-      i.setColor(color(175, 22, 22));
+      p.get(i).setColor(color(175, 22, 22));
     }
-    i.show();
+    p.get(i).show();
   }
 }
 
@@ -141,7 +146,7 @@ public void keyPressed() {
   if (keyCode == UP || key == 'w') up = true;
   else if (keyCode == LEFT || key == 'a') left = true;
   else if (keyCode == RIGHT || key == 'd') right = true;
-  if (keyCode == DOWN || key == 's') { //hyperspace
+  if (key == 'q') { //hyperspace
     m = millis();
     ship.setX((int) (Math.random() * width));
     ship.setY((int) (Math.random() * height));
@@ -332,9 +337,10 @@ class PowerUp {
   public void show() {
     fill(myColor);
     stroke(myColor, 20);
+    rectMode(CENTER);
     rect(myX, myY, 20, 20);
   }
-  public void effect() {
+  public void pickUp() {
     switch(typeList[type]) {
       case "laser":
         System.out.println("laser");
@@ -343,13 +349,14 @@ class PowerUp {
         System.out.println("explosion");
         break;
       case "design":
-        System.out.println("design");
+        ship.setDesign("lightning");
         break;
       case "spaceshipColor":
-        System.out.println("color");
+        ship.setColor(color(175, 22, 22));
+        println("color");
         break;
       case "gainHealth":
-        System.out.println("health");
+        health.add(new Spaceship());
         break;
     }
   }
@@ -378,7 +385,7 @@ class Spaceship extends Floater  {
     myDirectionY = 0;
     myPointDirection = 0;
     hitTime = -5000;
-    design = "lightning";
+    design = " ";
   }
   public void setX(int x) {myCenterX = x;}
   public int getX() {return (int) myCenterX;}
@@ -391,6 +398,9 @@ class Spaceship extends Floater  {
   public void setPointDirection(int degrees) {myPointDirection = degrees;}
   public double getPointDirection() {return myPointDirection;}
   public void setColor(int c) {myColor = c;}
+  public int getColor() {return myColor;}
+  public void setDesign(String s) {design = s;}
+
   private void drawDesign(int designColor) {
     fill(designColor);
     noStroke();
@@ -457,7 +467,10 @@ class Spaceship extends Floater  {
       health.remove(0);
     } else {
       noLoop();
-      background(100);
+      for (int i=p.size()-1; i>=0; i--)  p.remove(i);
+      for (int i=a.size()-1; i>=0; i--)  a.remove(i);
+      for (int i=b.size()-1; i>=0; i--)  b.remove(i);
+      background(70);
       textSize(20);
       fill(0);
       text("you have died.\n game over", width/2, height/2);

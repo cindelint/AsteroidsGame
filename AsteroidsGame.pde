@@ -55,9 +55,9 @@ public void draw() {
     //if asteroids hit ship, ship loses health and asteroid disappears
     if (dist(ship.getX(), ship.getY(), a.get(i).getX(), a.get(i).getY()) <= a.get(i).getSize()+6) {
       if (millis() - ship.hitTime >= 3300) { //if ship hasn't been recently hit
-        ship.hit();
         a.remove(i);
         a.add(new Asteroid());
+        ship.hit();
       }
     }
   }
@@ -92,10 +92,10 @@ public void draw() {
   if (millis() - ship.hitTime < 3000) {
     if ((int) ((millis() - ship.hitTime)/300) % 2 == 0) {
       //timestamps 0-300, 600-900, 1200-1500, 1800-2100, 2400-2700. fade out
-      ship.setColor(color(200,300-((millis()-ship.hitTime)%300)));
+      ship.setColor(color(ship.getColor(),300-((millis()-ship.hitTime)%300)));
     } else {
       //timestamps 300-600, 900-1200, 1500-1800, 2100-2400,2700-3000. fade in
-      ship.setColor(color(200,(millis()-ship.hitTime)%300));
+      ship.setColor(color(ship.getColor(),(millis()-ship.hitTime)%300));
     }
   }
 
@@ -111,13 +111,18 @@ public void draw() {
   if (Math.random() < .005 && p.size() < 4) {
     p.add(new PowerUp());
   }
-  for (PowerUp i: p) {
-    if (dist(ship.getX(),ship.getY(),i.getX(),i.getY()) < 10) {
-      i.setColor(color(181, 61, 61));
+  for (int i=0; i<p.size(); i++) {
+    if (dist(ship.getX(),ship.getY(),p.get(i).getX(),p.get(i).getY()) < 18) {
+      p.get(i).setColor(color(0));
+      if (keyPressed && (keyCode == DOWN || key == 's')) {
+        p.get(i).pickUp();
+        p.remove(i);
+        break;
+      }
     } else {
-      i.setColor(color(175, 22, 22));
+      p.get(i).setColor(color(175, 22, 22));
     }
-    i.show();
+    p.get(i).show();
   }
 }
 
@@ -125,7 +130,7 @@ public void keyPressed() {
   if (keyCode == UP || key == 'w') up = true;
   else if (keyCode == LEFT || key == 'a') left = true;
   else if (keyCode == RIGHT || key == 'd') right = true;
-  if (keyCode == DOWN || key == 's') { //hyperspace
+  if (key == 'q') { //hyperspace
     m = millis();
     ship.setX((int) (Math.random() * width));
     ship.setY((int) (Math.random() * height));
